@@ -1,5 +1,5 @@
 import express from 'express'
-import mongoose from 'mongoose'
+import { connectToDatabase, databaseUri } from './config/database.js'
 import usersRouter from './routes/users.js'
 import teamsRouter from './routes/teams.js'
 import activitiesRouter from './routes/activities.js'
@@ -7,7 +7,6 @@ import leaderboardRouter from './routes/leaderboard.js'
 import workoutsRouter from './routes/workouts.js'
 
 const PORT = Number(process.env.PORT ?? 8000)
-const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://127.0.0.1:27017/octofit_db'
 
 // Construct Codespaces-aware API URL
 const getApiUrl = (): string => {
@@ -39,8 +38,8 @@ app.use('/api/workouts', workoutsRouter)
 
 const start = async () => {
   try {
-    await mongoose.connect(MONGO_URI)
-    console.log(`Connected to MongoDB at ${MONGO_URI}`)
+    await connectToDatabase()
+    console.log(`Connected to MongoDB at ${databaseUri}`)
 
     app.listen(PORT, () => {
       const apiUrl = getApiUrl()
